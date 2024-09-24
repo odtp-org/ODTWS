@@ -16,6 +16,9 @@ var respecConfig = {
     branch: "main",
     repoURL: "https://github.com/odtp-org/odts",
   },
+  edDraftURI: "https://odtp-org.github.io/ODTWS/odtws.html",
+  prevED: "https://odtp-org.github.io/ODTWS/odtws.html",
+  subtitle: "Open Digital Twin Workflow Standard",  
   localBiblio: {
     "SDSC":{
       "href": "https://www.datascience.ch/",
