@@ -143,6 +143,11 @@ var respecConfig = {
     "ISO":{
       "href": "https://www.iso.org/foreword-supplementary-information.html",
       "title": "ISO",
-    }                     
+    },
+    "HYPOTHES-IS":{
+      "href":"https://web.hypothes.is",
+      "title": "hypothes.is",
+      "publisher": "https://web.hypothes.is"
+    },                  
   }   
 };
