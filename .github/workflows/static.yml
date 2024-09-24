@@ -36,8 +36,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
-          path: '.'
+          # Specify the path to the folder containing your HTML and JS files
+          path: './docs/releases/1.0/'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
