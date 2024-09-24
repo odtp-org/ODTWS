@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <title>ODTWS Open Digital Twin Workflow Standard Version 1</title>
+  <meta content="text/html; charset=utf-8" http-equiv="content-type"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <script src="https://unpkg.com/mermaid@8.4.6/dist/mermaid.min.js"></script>
+  <script class="remove" src="https://www.w3.org/Tools/respec/respec-w3c" defer></script>
+  <script class="remove" src="config.js"></script>
+</head>
+<body>
+
+<section id="abstract" class="informative">
+  <p>
+    This is the first version of a draft for an Open Digital Twin Standard (ODTWS) created by the Technical
+    Committee for the Open Digital Twin Standard which is currently constituted of the authors of the
+    Open Digital Twin Platform (ODTP). The standard is meant to be inclusive and overarching technical
+    implementations of digital twins across all potential applications in business, governance, and
+    research. As such, we encourage each body interested in the subject to contact us to join the
+    Technical Committee for following drafts and the eventual standard. We are also open to input from
+    International organizations, governmental and non-governmental, to take part in the work.
+  </p>
+  <p>
+    The procedures used to develop the first draft of this document and those intended for its further
+    maintenance are described as follows:
+  </p>
+  <ol>
+    <li>
+      The documentation of the ODTP has been extracted.
+    </li>
+    <li>
+      The text is generalized to describe a generic execution environment for digital twins.
+    </li>
+    <li>
+      The ODTP is taken as the reference implementation of the ODTWS.
+    </li>
+    <li>
+      The ODTWS may diverge from ODTP to accommodate other digital twin technologies and platforms.
+    </li>
+    <li>
+      Mutual agreement on the text of the standard is sought from all members of the Technical
+      Committee.
+    </li>
+    <li>
+      New members of the Technical Committee are admitted by existing members in an agreed-upon
+      manner.
+    </li>
+  </ol>
+  <p>
+    Any trade name used in this document is information given for users' convenience and does not
+    constitute an endorsement.
+  </p>
+  <p>
+    For an explanation of the voluntary nature of standards, we refer to the outline by the ISO:
+    https://www.iso.org/foreword-supplementary-information.html. They do not include contractual, legal,
+    or statutory requirements. Voluntary standards do not replace national laws, with whose standards
+    users are understood to comply with and which take precedence.
+  </p>
+  <p>
+    We follow the ISO guidelines for normative ISO deliverables to understand how to implement the
+    standard:
+  </p>
+  <ul>
+    <li>
+      "shall" indicates a <strong>requirement</strong> which indicates objectively verifiable criteria to be fulfilled and
+      from which no deviation is permitted if conformance with the document is to be claimed
+    </li>
+    <li>
+      "should" indicates a <strong>recommendation</strong> which indicates a possible choice or course of action
+      deemed to be particularly suitable without necessarily mentioning or excluding others
+    </li>
+    <li>
+      "may" is used to indicate that something is permitted
+    </li>
+    <li>
+      "can" is used to indicate that something is possible, for example, that an organization or individual
+      is able to do something
+    </li>
+  </ul>
+  <p>
+    In order to improve the quality of international standards, we follow the 6 principles introduced by the
+    World Trade Organisation Technical Barrier to Trade Committee that clarify and strengthen the
+    concept of international standards as far as applicable:
+  </p>
+  <ul>
+    <li>
+      transparency
+    </li>
+    <li>
+      openness
+    </li>
+    <li>
+      impartiality and consensus
+    </li>
+    <li>
+      relevance and effectiveness
+    </li>
+    <li>
+      coherence
+    </li>
+    <li>
+      development dimension
+    </li>
+  </ul>
+  <p>
+    For details of the principles, see Annex 4 to the Second Triennial Review of the TBT Agreement.
+    This document was prepared by the Technical Committee for the Open Digital Twin Standard
+    (TC-ODTWS) formed at the Swiss Data Science Center [[SDSC]] and the Center for Sustainable Future Mobility 
+    [[CSFM]] in the ETH domain In Switzerland. Currently, the members of the TC-ODTWS are Jascha Grübel, Sabine
+    Maennel, and Carlos Vivar Rios. Additional contributions were made by Robin M. Franken (on
+    semantic validation) and Sabrina Ossey (on authentication). Milos Balac, Chenyu Zuo, and Stefan
+    Ivanovic also reviewed the document.
+  </p>
+  <p>
+    Any feedback or questions on this document should be directed to the contact on the official
+    repository [[ODTP-Organization]].
+  </p>
+</section>
+
+<section id="introduction" class="informative">
+  <h2>Introduction</h2>
+  <p>
+    The ODTWS series defines a framework to support the creation of digital twins of observable processes
+    in the real world (physical twins).
+  </p>
+  <p>
+    A digital twin monitors the observable processes and assists with analyzing these processes. Digital
+    twins allow to increase the visibility into complex processes and make their digital representation
+    transparent.
+  </p>
+  <p>
+    The digital twins supported by the ODTWS framework depend on the implementation of the reference
+    framework (e.g., ODTP) and the available components (and their technology and software
+    requirements). Different domain applications may require different data standards. As a framework,
+    this document does not prescribe specific data formats and communication protocols but informs on
+    architectures that should be supported across different implementations to attain high-level
+    interoperability.
+  </p>
+  <figure id="figure1">
+    <img src="images/figure1.png" alt="Digital Twin"/>
+    <figcaption>The relation between the five-component model for digital twins and the ODTWS. The
+      orchestration (dark blue) is handled fully within the ODTWS (medium blue). The components (light blue)
+      rely on external solutions beyond the ODTWS to work but follow ODTWS to be integrated.
+    </figcaption>
+  </figure>
+  <p>
+    Figure 1 shows the theoretical framework for digital twins with five environments, based on previous
+    work on digital twins. The ODTWS framework aims to provide a standard for these five environments.
+    The environments are split into two groups. The first group manages how to orchestrate generic
+    digital twins with the data and connection environment, and the second group provides individualized
+    features for specific digital twins from preexisting independent components of three kinds matching
+    the environments:
+  </p>
+  <ul>
+    <li>Physical environment: Data loading and preprocessing
+    </li>
+    <li>Analytical environment: Data analysis including machine learning
+    </li>
+    <li>Virtual environment: Data Visualization, Data Interaction, and Decision-Making
+    </li>
+  </ul>
+  <p>
+    Most digital twins vary in their features strongly depending on the area of application. Requirements
+    of realtimeness differ with regard to data acquisition and data output. Sometimes, data acquisition
+    varies from working only with historical data to the Internet of Things (IoT) real-time data acquisition
+    and data output of simulation results may take days to compute compared to minutely updates of
+    prediction models. Another issue that digital twin development often faces is that these twins are
+    developed by a small group or a developer/researcher with a narrow focus on just one topic (e.g.,
+    data visualization, data simulation, data analysis) without the expertise to build an interoperable
+    digital twin.
+  </p>
+  <p>
+    ODTWS facilitates combining these digital twins’ features so that a bigger goal can be achieved without
+    forcing developers into an intense collaboration and without having to maintain a complex product.
+    Complex management is taken on the orchestrator, and individual features are developed in the
+    components with little overhead and full control of the development process. ODTWS also defines the
+    properties of a marketplace of components named the component zoo to facilitate the exchange of
+    digital twin components to attain interoperability.
+  </p>
+
+</section>
+
+<section id="scope">
+  <h2>Scope</h2>
+  <p>
+    The ODTWS series contains the following four parts:
+  </p>
+  <ul>
+    <li>
+      <strong>ODTWS-1 Components</strong>: A recipe to turn a tool into reusable components and a metadata
+      specification for these components.
+    </li>
+    <li>
+      <strong>ODTWS-2 Workflow</strong>: A specification of how components are chained together to produce workflows
+      in the shape of directed acyclic graphs.
+    </li>
+    <li>
+      <strong>ODTWS-3 Orchestrator</strong>: A specification for an orchestrator that how to instantiate executions of
+      workflows.
+    </li>
+    <li>
+      <strong>ODTWS-4 Zoo</strong>: A registry called Zoo where components and workflows can be registered and
+      discovered for reuse and reproducibility.
+    </li>
+  </ul>
+  <figure id="figure2">
+    <img src="images/figure2.png" alt="Digital Twin Components"/>
+    <figcaption>shows the relationship between the four parts in the series.
+    </figcaption>
+  </figure>
+</section>
+
+<section id="terms-definitions">
+  <h2>Terms, definitions and abbreviated terms</h2>
+  <table class="def">
+    <tbody>
+    <tr>
+      <th>Digital Twin</th>
+      <td><p>A digital twin is an abstract construct to represent a physical twin by capturing key characteristics of
+        interest to describe and analyze observable processes to a sufficient degree for a dedicated task and
+        then make a decision or potentially actuate on the physical twin based on the findings. Degrees of
+        realism required by a task may vary and this definition tries to accommodate all variants of digital
+        twins, including subsets such as Digital Shadows (raw data visualization) and Digital Models (no
+        coupling to the physical twin). In some cases, digital twins are coupled to virtual twins in case the
+        physical twin does not exist yet to explore its potential properties. A virtual twin provides data to a
+        digital twin that behaves as if it came from a physical twin. ODTWS covers all these variations and
+        henceforth will refer to them plainly as digital twins.</p>
+      </td>
+    </tr>    
+    <tr>
+      <th>Open Digital Twin Platform (ODTP)</th>
+      <td><p>The reference implementation of the ODTWS: A tool designed to generate specific digital twins
+        by integrating into a platform how to design, manage, run, and share digital twins. It offers an
+        interface (CLI and GUI) for running and managing digital twins. It wraps different open-source
+        technologies according to ODTWS to provide a high-level Application Programming Interface
+        (API) for the final user. Finally, it implements a zoo as a repository of searchable components
+        to (re-)create digital twins. The current version of reference implementation may not
+        implement all features of the standard yet but aims to do so in the long-run. The reference
+        implementation can be found here: [[ODTP-Organization]]</p>
+      </td>
+    </tr>
+    <tr>
+      <th>Components (ODTWS Term)</th>
+      <td><p>Components for a digital twin are used to instantiate tools for specific tasks by providing
+        implementations of the three individualized environments (see Figure 1). Each component
+        provides an extension to the available capabilities under ODTWS that implementations (such as
+        ODTP) may use to perform specific tasks in the digital twin. These extensions are generated by
+        the community for the community, and their specific capabilities are not part of ODTWS, but
+        ODTWS describes the features a component must have to be interoperable. This includes that
+        the input/output of a component is validated semantically and that they run within a ([[Docker]])
+        container as an independent micro-service. Typically, they can be one of the following
+        categories:</p>
+        <ul>
+          <li>Dataloader component (implementing the physical environment of the digital twin)</li>
+          <li>Analytical component (implementing the analytical environment of the digital twin)</li>
+          <li>Visualization component (implementing the virtual environment of the digital twin)</li>
+        </ul>
+      </td>
+    </tr>
+    <tr>
+      <th>Core/core-optional modules (ODTWS Term)</th>
+      <td><p>Modules for a digital twin are used to instantiate solutions for generic tasks with a digital twin
+        by providing implementations for features in the two orchestrating environments (see <a href="#figure1">Figure
+        1</a>). Each module is tightly integrated into the reference implementation (e.g., ODTP) and is
+        developed together with the maintainer of the reference implementation and deployed as
+        needed. These core modules <strong>shall</strong> include the programmes needed to run the ODTWS
+        implementation and wrap the services used into a user interface. Core-optional modules are
+        not mandatory to run an ODTWS implementation with the minimal features (e.g., running
+        manually ODTWS components) but <strong>should</strong> be implemented to provide a more complete
+        experience of the ODTWS standard.</p>
+      </td>
+    </tr>        
+    <tr>
+      <th>Services</th>
+      <td><p>ODTWS follows a micro-services architecture to generate a digital twin. Each service refers to
+        one logical unit that performs one specific task in an independent manner to produce a digital
+        twin. In ODTWS, both modules and components are instantiated as (micro-)services. These are
+        chained together to produce an effective implementation for a specific digital twin. The digital
+        twin combines generic features for digital twins (modules) with individual solutions for a
+        specific task (components).</p>
+      </td>
+    </tr>      
+    <tr>
+      <th>Semantic input & output validation</th>
+      <td>
+        <p>
+          In the ODTWS abstraction Digital twin components can be considered data converters. The input
+          to such a converter must be a file structured in a certain way. The tool inside the component
+          converts this input into a different format, such as data needed for visualization, a different
+          structure, an obfuscation of data or other types of processing to the data such as aggregation,
+          simulation, interpolation, and extrapolation. As the functioning of a component is dependent
+          on the data it receives, a structured mechanism of describing the input data requirements
+          ensures proper functioning of a component. A well-described input schema can help a user
+          assess whether their data set will comply with the requirements of the component. The
+          semantic description includes information about the filenames, folder structure, (multi-lingual)
+          labels and definitions of the columns, keys, or properties within such a file, and some
+          information about the datatypes expected for each parameter. 
+        </p>
+        <p>
+          Having the input requirements accurately and structurally described is important, but as components
+          may require many files, with many parameters associated to each file, automated validation of a
+          dataset becomes a requirement for ODTWS. The automation of validation of each file in the input
+          dataset may be performed in two steps. First, all files are discovered that exist in the input dataset
+          and their associated parameters which are present within each file. Second, an expectation is
+          formulated about what data is needed. The Instance data is an RDF-compliant representation of the
+          input files. This entails triples in an [[RDF-XML]] compliant file format, describing a given input folder, with
+          metadata about which files exist in this folder, and which variables exist in each file. The Schema data
+          ([[SHACL]] shapes) is an [[RDF-XML]] compliant definition against which Instance data is checked. In other
+          words - this design allows a data owner to check whether their data (or the output of another
+          component) is compatible with the input requirements of a component.
+        </p>
+      </td>
+    </tr>       
+    <tr>
+      <th>Workflow</th>
+      <td><p>A workflow describes a chain of components that are supposed to be executed to produce the
+        functionality of a digital twin. Workflows can be sequential but should also support Directed
+        Acyclic Graphs (DAG). This allows workflows to execute complex tasks for digital twins by
+        splitting the data flow and joining them where necessary.</p>
+      </td>
+    </tr>     
+    <tr>
+      <th>Execution and Trace</th>
+      <td><p>An Execution instantiates the components in a workflow into a set of micro-services that are
+        run once and for which operational data and results are captured. Every step of an Execution is
+        logged in a trace of the digital twin for reproducibility purposes. A Digital Twin can be
+        configured so executions are performed recurrently on time providing basic support for
+        real-time setup.</p>
+      </td>
+    </tr>   
+    <tr>
+      <th>Step</th>
+      <td><p>A step describes the running of a single service (instantiated from a component) in the
+        execution of a workflow. Steps are atomic from the orchestrator’s perspective and therefore,
+        the logging is limited to parameters, exposed metrics, input data, and output data.</p>
+      </td>
+    </tr>       
+    </tbody>
+  </table>     
+</section>
+
+<section id="odtws-1-components">
+  <h2>ODTWS-1 Components</h2>
+  <p>
+    ODTWS-1 Components are the centerpiece of ODTWS: An ODTWS-1 Component is a wrapper to an existing
+    tool. This wrapper makes the tool usable in an <a href="#odtws-3-orchestrator">ODTWS-3 Orchestrator</a>. 
+    The instantiation of an ODTWS-1
+    Component is not independent of the orchestrator, as the transformation from tool to component
+    depends on the ODTWS-3 Orchestrator’s own implementation. However, ODTWS-1 Components shall be
+    usable by any compliant ODTWS-3 Orchestrator. ODTWS-1 Components can be arranged into 
+    <a href="#odtws-2-workflow">ODTWS-2 Workflows</a> and can be discovered by sharing them in 
+    an <a href="#odtws-4-zoo">ODTWS-4 Zoo</a>. An orchestrator can search
+    ODTWS-4 Zoos to find ODTWS-1 components to assemble a digital twin according to a ODTWS-2 Workflow.
+  </p>
+  <p>  
+    ODTWS-1 components consist of the following elements further explained in the sections below:
+  </p>
+  <ul>
+    <li><strong>Tools</strong>: explains what is considered a tool in the context of ODTWS</li>
+    <li><strong>Components</strong>: explains how a tool can be turned into an ODTWS-1 Component</li>
+    <li><strong>Versioning</strong>: explains the versioning of both tool and component and how they are coupled</li>
+    <li><strong>Metadata</strong>: explains the metadata that are expected for a ODTWS-1 Component</li>
+    <li><strong>Types</strong>: explains the component types</li>
+  </ul>
+  <figure id="figure3">
+    <img src="images/figure3.png" alt="ODTWS Framework"/>
+    <figcaption>ODTWS framework with component, orchestrator and zoo
+    </figcaption>
+  </figure>  
+  <section id="odtws-1-components-tools">
+    <h3>Tools</h3>
+    <p>A tool is a [[Git]] repository: hosted by a git registry such as github or gitlab.</p>
+    <ul>
+      <li>Tools shall provide a license.</li>
+      <li>They should be versioned with [[Semantic-Versioning]].</li>
+    </ul>
+    <p>The ODTWS-1 Component is another [[Git]] repository derived from the tool to integrate the tool into a
+    digital twin workflow:</p>
+    <ul>
+      <li>It is linked to the tool in a standardized way, as described below</li>
+      <li>The component shall add standardization to the tool that makes it compatible with the 
+        <a href="#odtws-3-orchestrator">ODTWS-3 Orchestrator</a> and the <a href="#odtws-4-zoo">ODTWS-4 Zoo</a>.
+      </li>
+      <li>The component shall separate digital twin features from the tool features, keeping the tool
+      independent of information on how a digital twin is operated.</li>
+    </ul>  
+  </section>
+
+  <section id="odtws-1-components-components">
+    <h3>Components</h3>
+    <p>An ODTWS-1 Component is a version-controlled repository (e.g. [[Git]]) and shall provide the following
+      elements: (here we give a list and below you will find a description of each element in detail)</p>
+      <ul>
+        <li>A <strong>Dockerfile</strong> that shall be adapted to both the tool and the <a href="#odtws-3-orchestrator">ODTWS-3 Orchestrator</a>.
+        </li>
+        <ul>
+          <li>A dockerfile may support multiple orchestrators but shall support at least one.</li>
+        </ul>
+        <li>A set of <strong>setting files</strong> as with a standardized name:</li>
+          <ul>
+            <li>The parameter may be found in <code>parameters.yaml</code> or <code>parameters.json</code></li>
+            <li>The metrics may be found in <code>metrics.yaml</code> or <code>metrics.json</code></li>
+            <li>The semantic input schema may be found in <code>semantic-input.yaml</code> or
+              <code>semantic-input.json</code>
+            </li>
+            <li>The semantic output schema may be found in <code>semantic-output.yaml</code> or
+              <code>semantic-output.json</code>
+            </li>
+          </ul>  
+          <li>A metadata file with a standardized name.</li>
+          <ul>
+            <li>The metadata shall be found in <code>odtws.yaml</code> or <code>odtws.json</code></li>
+            <li>The setting files must be mentioned and described in the metadata file.</li>
+          </ul>
+          <li>An <strong>app</strong> script that shall check out the tool from a repository. It shall call methods of the [ODTWS-3
+          Orchestrator client] and it shall call at least one method of the tool.</li>
+        </ul>      
+    <section id="odtws-1-components-app">
+      <h4>App</h4>
+      <p>An ODTWS-1 Component shall contain an app that connects to both the methods of the tool and the
+      methods of the orchestrator. It is a bash script that shall be called in the Dockerfile (defined below) by
+      the <a href="#odtws-3-orchestrator">ODTWS-3 Orchestrator</a> with the following tasks:</p>
+      <ul>
+        <li>It shall checkout the tool from its [[Git]] repository</li>
+        <li>It shall use the client library for the [ODTWS-3 Orchestrator] to capture the operational metadata
+        (e.g. sharing progress updates with the orchestrator)</li>
+        <li>It shall run the tool by calling the appropriate methods it provides</li>
+      </ul>
+    </section>
+    <section id="odtws-1-components-dockerfile">
+      <h4>Dockerfile</h4>
+      <p>An ODTWS-1 Component shall set up the environment for the tool with a dockerfile and shall install the
+        necessary dependencies. It shall prepare a folder structure inside the ([[Docker]]) container to match the
+        folder structure that the ODTWS-3 Orchestrator expects for interoperation. It may create a folder
+        structure that the tool expects. At last, it shall call the <a href="#odtws-1-components-app">app</a> as a bash script to execute the tool to
+        achieve the desired task of the component.</p>
+    </section>       
+    <section id="odtws-1-components-metadata-file">
+      <h4>Metadata file</h4>
+      <p>An ODTWS-1 Component shall include metadata on the component with the following parts:</p>
+      <ul>
+        <li>The metadata on the component shall be stored (authors, license, description, repository).</li>
+        <li>Parameters that the component exposes may be stored. These parameters shall be exposed to
+        the ODTWS-3 Orchestrator. They can be changed by the user to run the component.</li>
+        <li>Parameters as defined above may also be exposed in a parameters file.</li>
+        <li>Metrics that the component exposes may be stored. These metrics shall be exposed to the
+        ODTWS-3 Orchestrator. They can be read by the user when running the component.</li>
+        <li>Metrics as defined above may also be exposed in a metrics file.</li>
+        <li>The component should add a link to a semantic schema for the expected inputs and outputs as a
+        [[SHACL]] shapes graph that can then be used by the ODTWS-3 Orchestrator to perform validation
+        checks on the inputs and outputs. ODTWS-4 Zoos may use the input/output schemas to define
+        compatible components.</li>
+      </ul>
+    </section>  
+    <section id="odtws-1-components-parameter-metadata-file">
+      <h4>Parameter Metadata file</h4>
+      <p>Parameters are defined as key-value pairs and may be structured in lists or arrays corresponding to
+        the yml and json standards. Parameters are passed into the tool through the user-defined app script.
+        Only parameters that are properly passed into the tool may take effect.</p>
+    </section>
+    <section id="odtws-1-components-metric-metadata-file">
+      <h4>Metrics Metadata file</h4>
+      <p>Metrics are special outputs of a tool to the ODTWS-3 Orchestrator data storage. Metrics shall be
+        provided by the tool developer. They shall be used for control and comparison of multiple executions
+        and digital twins on a high level. They shall implement in the component a function, a path or
+        stream/socket from where to store the metric data in the step representation of the ODTWS-3
+        Orchestrator. Metrics may have semantic descriptions.</p>
+    </section>
+    <section id="odtws-1-components-semantic-schema">
+      <h4>Semantic Input & Output Schema</h4>
+      <p>The component author should semantically describe the data inputs and outputs required for the tool
+        in a RDF-compliant ([[RDF-XML]]) format. All required files and parameters should be accurately described with
+        labels, definitions and restrictions to enable semantic reasoning about a component. The output of
+        the component should also be described entirely to create a semantic black-box view on the
+        component.</p>
+    </section>        
+  </section>
+
+  <section id="odtws-1-components-versioning">
+    <h3>Versioning</h3>
+    <p>The versioning of the tool and component need to be independent from each other, since there may
+      be various reasons that justify a new component version:</p>
+    <ul>
+      <li>The ODTWS-3 client has changed</li>
+      <li>Elements of the Component such as the Dockerfile or the App have changed</li>
+      <li>The version of the tool that is used in the component has changed</li>
+    </ul>
+    <p>Since the Tool version is important, it shall be added in the metadata of the component, see
+    [Metadata File]. We recommend adding an automatic check that ensures that the version of the tool
+    mentioned in the odtws.yaml file and the version that is actually used in the component match.</p>
+    <figure id="figure4">
+      <img src="images/figure4.png" alt="ODTWS Framework"/>
+      <figcaption>Tool version should be added in the metadata of the component
+      </figcaption>
+    </figure>      
+  </section> 
+
+  <section id="odtws-1-components-metadata">
+    <h3>Metadata</h3>
+    <p>The metadata schema for the Component is described at <a href="#odtws-4-zoo">ODTWS-4 Zoo</a>.</p>
+  </section> 
+  <section id="odtws-1-components-types">
+    <h3>Types</h3>
+    <p>ODTWS implementations shall provide the following component types:</p>
+    <ul>
+      <li>Ephemeral components</li>
+      <li>Interactive components</li>
+      <li>API components</li>
+    </ul>  
+    <section id="odtws-1-components-type-ephemeral">
+      <h4>Ephemeral Components</h4>
+      <p>Ephemeral components shall be temporary and shall not persist data (e.g. transforming data from
+        one format into another). They shall be used for short-lived analytical operations and discarded after
+        use. They shall be built when preparing the digital twin execution and shall only be used in a single
+        execution step. Parameters shall be provided as environment variables, and input data shall be placed
+        in one specific directory.
+      </p>
+      <figure id="figure5">
+        <img src="images/figure5.png" alt="Run of an ephemeral component"/>
+        <figcaption>Run of an ephemeral component
+        </figcaption>
+      </figure>         
+    </section>
+    <section id="odtws-1-components-type-interactive">
+      <h4>Interactive Components</h4>
+      <p>Interactive components shall be designed to interact with the user. These components should be
+        used in user interfaces or visualizations. They shall be built in a certain execution step but will keep
+        running as a ([[Docker]]) container until the user stops them. They are often the last step in an execution. 
+        In real time settings, interactive components may expose parameters of other components forwarded
+        by the orchestrator. Changing those parameters may trigger another execution of all components
+        impacted by the change.
+      </p>
+      <figure id="figure6">
+        <img src="images/figure6.png" alt="Run of an interactive component"/>
+        <figcaption>Run of an interactive component
+        </figcaption>
+      </figure>         
+    </section>       
+    <section id="odtws-1-components-type-api">
+      <h4>Api Components</h4>
+      <p>API components shall be built only once and can be reused in multiple executions. We can think of
+        them as continuously running Microservices. The component is going to provide an API-Endpoint in
+        one port that will allow running the tool in parallel or in multiple executions. This kind of component
+        is useful when the component building process (in [[Docker]]) takes a large amount of time, or when a
+        long-lasting task can be reused in multiple executions. An example of this is the loading of a machine
+        learning model into memory.</p>
+      <p>
+        The API component receives the variables as JSON in the request’s payload. This allows a more
+        complex configuration of parameters than in the Ephemeral type. Input data can be provided in the
+        request, or, if the file size is big, as an item in the S3 storage ([[S3-Minio]]).
+      </p>
+      <figure id="figure7">
+        <img src="images/figure7.png" alt="Run of an API component"/>
+        <figcaption>Run of an API component
+        </figcaption>
+      </figure>         
+    </section>           
+  </section>        
+</section>
+
+<section id="odtws-2-workflow">
+  <h2>ODTWS-2 Workflow</h2>
+  <p>
+    Workflows are blueprints on how to assemble ODTWS-1 Components to perform the tasks of a digital
+    twin. A workflow shall describe the sequence of ODTWS-1 components required to perform a task. A
+    workflow may take the form of a directed acyclic graph (DAG).
+  </p>
+  <figure id="figure8">
+    <img src="images/figure8.png" alt="Digital Twin Workflow"/>
+    <figcaption>A workflow of components represented as a DAG.
+    </figcaption>
+  </figure> 
+  <p>Workflows should be editable with a workflow editor such as [[BARFI]]. A workflow shall contain all the
+    information necessary to run an execution, including: components, parameters values, and initial
+    inputs.
+  </p>
+  <p>  
+    Examples of workflows are provided in Appendix B and Appendix C as they have been built in the
+    context of [[ODTP]].
+  </p>
+  <section id="odtws-2-workflow-templates">
+    <h3>Workflow Templates</h3>
+    <p>Workflows where components are chosen but parameters are not yet set shall be called Workflow
+      Templates. They can be reused for workflows that differ on their inputs. These templates may be
+      used to create and run executions programmatically.
+    </p>
+  </section>
+</section>
+
+<section id="odtws-3-orchestrator">
+  <h2>ODTWS-3 Orchestrator</h2>
+  <p>An ODTWS-3 Orchestrator is a tool that shall combine ODTWS-1 components into ODTWS-2 Workflows of
+    directed acyclic graphs and shall instantiate them as an Execution of micro-services running as
+    ([[Docker]]) containers.
+  </p>
+  <p>The orchestrator shall provide the following elements that are further described in this section below:</p>
+  <ol>
+    <li>
+      <a href="#odtws-orchestrator-userinterface">User Interface</a>: To define, run, and inspect Executions of ODTWS-2 Workflows
+    </li>
+    <li>
+      <a href="#odtws-orchestrator-data-storage">Data Storage for Component Outputs</a>: To transfer data between components
+    </li>
+    <li>
+      <a href="#odtws-orchestrator-semantic-validation">Semantic Validation</a>: Validation engine for validation of semantically annotated input data
+      against semantic component input requirements.
+    </li>
+    <li>
+      <a href="#odtws-orchestrator-operational-data">Operational Data Storage</a>: To document ODTWS-2 Workflow executions
+    </li>
+    <li>
+      <a href="#odtws-orchestrator-tool-adapter">Tool Adapter</a>: To turn tools into ODTWS-1 components that are compatible with an ODTWS-3
+      Orchestrator
+    </li>
+    <li>
+      <a href="#odtws-orchestrator-client-library">Client Library</a>: A library that can be mounted in the ODTWS-1 components to communicate with the
+      ODTWS-3 Orchestrator 
+    </li>   
+  </ol>
+  <figure id="figure9">
+    <img src="images/figure9.png" alt="Example Implementation of ODTWS"/>
+    <figcaption>A possible implementation of ODTWS in ODTP. Digital Twins are owned by users. A workflow is
+      used to instantiate an execution of steps. The output of selected steps can be visualized as a result.
+    </figcaption>
+  </figure>   
+  <section id="odtws-orchestrator-userinterface">
+    <h3>User Interface</h3>
+    <p>The user interface of the ODTWS-3 Orchestrator shall enable the following actions on ODTWS-1
+      Components and their management:
+    </p>
+    <ul>
+      <li><strong>Register ODTWS-1 Components</strong>, including versions of those components</li>
+      <li><strong>Register Users</strong></li>
+      <li><strong>Users to create projects called digital twins</strong></li>
+      <li><strong>Allows Users to create workflows as acyclic graphs</strong>, where each node is coupled to the version of
+      an ODTWS-1 Component: such an ODTWS-2 Workflow is instantiated as an execution, and each node
+      represents a step in the execution.</li>
+      <li><strong>Allows Users to prepare an execution</strong>: The ([[Docker]]) images for all the steps are built following the
+      workflow and the filesystem of the user is prepared for writing the outputs.</li>
+      <li><strong>Allows users to run executions</strong>: Once all ([[Docker]]) images are available and the file system has
+      been prepared the ODTWS-1 Components are run as specified in the Workflow as ([[Docker]])
+      containers.</li>
+      <li><strong>Execution runs shall be traced</strong> by the ODTWS-3 Orchestrator to produce a logging trace.</li>
+      <li><strong>Provide a data storage</strong> to exchange data between the execution steps.</li>      
+    </ul>
+    <figure id="figure10">
+      <img src="images/figure10.png" alt="Semantic Output Validation"/>
+      <figcaption>The User Interface needs to provide visual access to user management, digital twin
+        management, workflow management and execution management. Note that digital twin specific
+        visualizations are implemented by the components and not in the Orchestrator.
+      </figcaption>
+    </figure> 
+
+  </section>  
+  <section id="odtws-orchestrator-docker-usage">
+    <h3>Usage of Docker</h3>
+    <p>[[Docker]] image and container names can be derived in an automated way from the component
+      versions. The ODTWS-3 Orchestrator should run on a server and should prepare a project folder to write
+      the file outputs of each step.</p>
+  </section>  
+  <section id="odtws-orchestrator-data-storage">
+    <h3>Data Storage</h3>
+    <p>The ODTWS-3 Orchestrator shall implement a data storage that allows to store outputs of component
+      runs. When components are combined into workflows, the ODTWS-3 Orchestrator shall facilitate the
+      exchange of data between consecutive components. In [[ODTP]] an S3 Data storage (([[S3-Minio]])) is used for that
+      purpose.
+    </p>
+    <p>
+      The stored data can be used for partial executions of workflows, e.g. starting with the second
+      component in a sequence but reusing the data loader component. This enables the user of the
+      ODTWS-3 Orchestrator to reuse the output of computationally heavy components.
+    </p>
+    <figure id="figure11">
+      <img src="images/figure11.png" alt="Semantic Output Validation"/>
+      <figcaption>The intermediate storage of data for transfer between components
+      </figcaption>
+    </figure>    
+  </section> 
+  <section id="odtws-orchestrator-semantic-validation">
+    <h3>Semantic Validation</h3>
+    <p>The ODTWS-3 Orchestrator shall automatically extract semantic information about a directory
+      (recursively analyze the files in a folder, and extract some metadata about the columns/properties of
+      each file) and write it to an [[RDF-XML]] graph. This “instance data” (metadata about the input dataset) shall
+      be validated against the “Schema data” provided by an ODTWS-1 Component. This shall be implemented using SHACL. 
+      The ODTWS-3 Orchestrator shall run a ([[SHACL]]) validation engine on this
+      combination to generate a report that provides information about the conformance of the dataset
+      with the schema.
+    </p>
+    <p>ODTWS-3 Orchestrators should warn users of non-conforming component connections. ODTWS-3
+      Orchestrators may deny the execution of a workflow that does not conform to ODTWS-2 Workflows.
+      The mode for a warning is called “Lazy execution”, where a workflow may run until an error occurs.
+      The mode for strict conformance is “Safe execution”, where a workflow is not run if non-conforming.
+    </p>
+    <figure id="figure12">
+      <img src="images/figure12.png" alt="Semantic Output Validation"/>
+      <figcaption>Semantic validation for ODTWS. The component creator (right) defines the dataset
+        requirements and the structure of the directory. The orchestrator (left) provides implementations for the
+        RDF-maker, SHACL-maker and [[SHACL]] validation engine. At runtime, the requirements and actual data
+        are fed into the RDF-maker and SHACL-maker to obtain metadata that allows the [[SHACL]] validation
+        engine to generate a final report on requirement compliance.
+      </figcaption>
+    </figure>  
+  </section>   
+  <section id="odtws-orchestrator-operational-data">
+    <h3>Operational Data</h3>
+    <p>There are three kinds of operational data in ODTWS:</p>
+    <ul>
+      <li><strong>Building Material</strong>: Base classes that are used to build Executions. These are the building blocks
+      that are shared in the ODTWS-4 Zoo</li>
+      <li><strong>Governance of Digital Twins</strong>: Data that defines Digital Twins and its Executions. Digital Twins are
+      usually set up by users, that intend to execute them in the ODTWS-3 Orchestrator</li>
+      <li><strong>Execution of Digital Twins</strong>: Run Data: Data that capture the run of an Execution</li>      
+    </ul>
+    <section id="odtws-orchestrator-building-material">
+      <h4>Building Material</h4>
+      <p>The following classes exist in ODTWS-3 to provide building material for Execution: this building material
+        is usually registered in the ODTWS-4 Zoo and shall be imported from there into the ODTWS-3 orchestrator:</p>
+      <ul>
+        <li><strong>Components</strong>: ODTWS-1 Components as registered in the ODTWS-4 Zoo</li>
+        <li><strong>Versions</strong>: Different Versions of Components, see the section <a href="#odtws-1-components-versioning">
+          Versioning</a> in ODTWS-1</li>
+        <li><strong>Workflow-Templates</strong>: Acyclic Graphs of Components as defined in ODTWS-2</li>
+        <li><strong>Workflows</strong>: Workflow-Templates with specified inputs and parameters, see <a href="#odtws-2-workflow">
+          ODTWS-2 Workflows</a></li>   
+      </ul>
+      <figure id="figure13">
+        <img src="images/figure13.png" alt="Building Material for a Digital Twins"/>
+        <figcaption>Building Material for a Digital Twins
+        </figcaption>
+      </figure>        
+    </section>  
+    <section id="odtws-orchestrator-governance">
+      <h4>Governance of Digital Twins</h4>
+      <p>The following classes provide governance for the Digital Twins:</p>
+      <ul>
+        <li><strong>Users</strong>: the users of the ODTWS-3 Orchestrator. The users should be authenticated, see section
+        <a href="#odtws-orchestrator-authentication">Authentication</a></li>
+        <li><strong>Digital Twins</strong>: The Digital Twins are the projects of ODTWS-3. They can be seen as the use cases.
+        They usually contain Executions of Workflows that share a result, see Figure 9 above</li>
+        <li><strong>Executions</strong>: Executions are Workflows intended to be executed as a pipeline of [[Docker]] containers.
+        Preparing and run</li>
+        <li><strong>Steps</strong>: Steps in an Execution correspond to versions of components</li>   
+      </ul>
+      <figure id="figure14">
+        <img src="images/figure14.png" alt="Governance of Digital Twins"/>
+        <figcaption>Governance of Digital Twins
+        </figcaption>
+      </figure>       
+    </section>
+    <section id="odtws-orchestrator-execution">
+      <h4>Execution of Digital Twins</h4>
+      <p>The following classes allow to run and monitor executions:</p>
+      <ul>
+        <li>Executions: Execution have already been mentioned in the Governance</li>
+        <li>Steps: Steps in an Execution correspond to the version of an ODTP-1 Component: that is the
+        component that runs as a [[Docker]] container in this step</li>
+        <li>Outputs: Outputs are the output of each step</li>
+        <li>Results: Results belong to a Digital Twin and can combine the outputs of several executions of
+        that Digital Twin.</li>
+      </ul>
+      <section id="odtws-orchestrator-executions">
+        <h5>Executions</h5>
+        <p>
+          A digital twin shall be produced in an ODTWS-3 Orchestrator by executing an ODTWS-2 workflow. The
+          ODTWS-3 Orchestrator shall create an execution by instantiating and running the ODTWS-2 Components
+          according to the ODTWS-2 workflow. The orchestrator should be able to copy executions and make
+          them reusable to be rerun with minor adjustments.
+        </p>
+        <p>Executions shall have the following mandatory properties:</p>
+        <ul>
+          <li>Workflow template: ODTWS-2 Workflow template on which the execution shall be based or an
+          acyclic graph of ODTWS-1 components</li>
+          <li>Title: Title of the execution</li>
+          <li>Description: Description of the execution</li>
+          <li>Start Timestamp: The time when the first Execution step started to run</li>
+          <li>End Timestamp: The time when the last step of the execution stopped running</li>
+          <li>Logs: A summary of all logs belonging to the execution as printed out by each component in the
+          workflow</li> 
+        </ul> 
+      </section>
+      <section id="odtws-orchestrator-steps">
+        <h5>Steps</h5>
+        <p>
+          A Step is the execution of a single component. The ODTWS-3 Orchestrator shall maintain these
+          mandatory properties of Steps:
+        </p>
+        <ul>
+          <li>Component Version: The version of the component that is run in this step</li>
+          <li>Start Timestamp: The time when the step started to run</li>
+          <li>End Timestamp: The time when the step stopped running</li>
+          <li>Logs: Reference to a Log Object that stores the logs of the step</li>
+          <li>Output: Reference to an output object</li>
+          <li>Parameters: JSON Object of Parameter Keys and Values as derived from the component</li> 
+          <li>Metrics: Reference to a Metrics Object that stores the metrics obtained from running a step</li>
+        </ul>     
+      </section>
+      <section id="odtws-orchestrator-output">
+        <h5>Output</h5>
+        <p>
+          The orchestrator shall store the output of each Step. Intermediate outputs shall be stored in the
+          ODTWS-3 Orchestrator’s data storage. The output of a Step shall be described with these Mandatory
+          properties:
+        </p>
+        <ul>
+          <li>Output Type: Snapshot (in the data storage) or file output (in the project directory)</li>
+          <li>S3_snapshot:</li>
+          <ul>
+            <li>Bucket: in the orchestrator’s data storage</li>
+            <li>Key: to access the bucket</li>
+          </ul>
+          <li>File:</li>
+          <ul>
+            <li>Name: File name for the output</li> 
+            <li>Size: Size of the output</li>
+            <li>File type: Type of the output</li>
+          </ul>
+        </ul>     
+      </section> 
+      <section id="odtws-orchestrator-steps">
+        <h5>Result</h5>
+        <p>
+          The result shall provide a combined output of selected executions within a digital twin. The result
+          shall allow the comparison of the outputs of several executions. This provides the ability to compare
+        </p>
+        <ul>
+          <li>Component Version: The version of the component that is run in this step</li>
+          <li>Start Timestamp: The time when the step started to run</li>
+          <li>End Timestamp: The time when the step stopped running</li>
+          <li>Logs: Reference to a Log Object that stores the logs of the step</li>
+          <li>Output: Reference to an output object</li>
+          <li>Parameters: JSON Object of Parameter Keys and Values as derived from the component</li> 
+          <li>Metrics: Reference to a Metrics Object that stores the metrics obtained from running a step</li>
+        </ul>     
+      </section>                             
+    </section>    
+  </section> 
+  <section id="odtws-orchestrator-authentication">
+    <h3>Authentication</h3>
+    <section id="odtws-orchestrator-users">
+      <h3>Users</h3>    
+      <p>Users shall create Digital Twins using ODTWS-2 Workflows or ODTWS-1 Components. The ODTWS-3
+        orchestrator needs to support user-owned digital twins that contain the executions and the data
+        produced by running the executions of a Digital Twin. The ODTWS-3 Orchestrator should offer user
+        authentication and authorization and use secure methods to verify user access.</p>
+      <p>  
+        The ODTWS can also provide team ownership. This feature allows collaboration on Digital Twins by
+        granting access and permissions to designated team members and fosters teamwork and knowledge
+        sharing within a project. It ensures data from different projects remains separate and secure. It is
+        crucial for maintaining confidentiality and preventing accidental data leakage.
+      </p>
+    </section>
+    <section id="odtws-orchestrator-authorization">
+      <h3>Authorization</h3>      
+      <p>The ODTWS-3 orchestrator shall have two categories of users:</p>
+      <ul>
+        <li>Normal users who access non-sensitive data</li>
+        <li>Authorized users who access non-sensitive and sensitive data</li>
+      </ul>  
+      <p>OpenID Connect (OIDC) [[OPENID-CONNECT-CORE]] is an industry-standard authentication and authorization protocol that can be
+        leveraged by ODTWS for user identification and authorization. The OpenID Connect plugin allows the
+        use of bearer access tokens to verify user identities before granting access to the orchestrator. The
+        ODTPS orchestrator shall implement an identity and access management (IAM) supporting the OIDC
+        protocol, such as [[Keycloak]] for:</p>
+      <ul>  
+        <li>User Management: handles user registration, login, and profile management.</li>
+        <li>Authentication: verifies user credentials and grants access tokens.</li>
+        <li>Token Management: issue and manage tokens used for ODTWS-3 orchestrator usage</li>    
+      </ul>
+    </section>  
+  </section>      
+  <section id="odtws-orchestrator-tool-adapter">
+    <h3>Tool Adapter</h3>
+    <p>The ODTWS-3 Orchestrator shall provide a recipe on how tools can be turned into ODTWS-1 components
+      in such a way that they will be compatible with the ODTWS-3 Orchestrator. An orchestrator may provide
+      a component template that can be copied and contains further instructions on how to get from the
+      provided template to a component for the tool, see ODTP as an example of how that can be done.
+    </p>
+  </section> 
+  <section id="odtws-orchestrator-client-library">
+    <h3>Client Library</h3>
+    <p>The ODTWS-3 Orchestrator and the ODTWS-1 Components shall communicate via a client library
+      consisting of functions and methods provided by the orchestrator to the components. Any ODTWS-1
+      Components shall install this library when instantiating a microservice to communicate with the
+      ODTWS-3 Orchestrator. The client library is orchestrator specific. The client library shall implement the
+      following features:</p>
+    <ul>
+      <li>Writing the logs</li>
+      <li>Storing and retrieving the operational metadata</li>
+      <li>Starting the app script of the component</li>
+    </ul>
+    <figure id="figure15">
+      <img src="images/figure15.png" alt="ODTWS Client Library"/>
+      <figcaption>The ODTWS-1 Component installs the Client Library to communicate with an ODTWS-3
+        Orchestrator. The component runs the tool in a [[Docker]] container.
+      </figcaption>
+    </figure>     
+  </section>             
+</section>
+
+<section id="odtws-4-zoo">
+  <h2>ODTWS-4 Zoo</h2>
+    <p>An ODTWS-3 Orchestrator should be able to discover ODTWS-1 components proposed for an ODTWS-2
+    Workflow in a registry called an ODTWS-4 Zoo. An ODTWS-4 Zoo is coupled to one or more ODTWS
+    orchestrators and shall ensure that the ODTWS-1 components and ODTWS-2 Workflows that it registers
+    are interoperable in the context of these ODTWS-3 Orchestrators. The zoo consists of the following
+    parts:
+  </p>
+  <ul>
+    <li><strong>Repository</strong>: A repository that contains the component /workflow registry and makes them
+    available via an index</li>
+    <li><strong>Registration Method</strong>: A recipe on how to register and unregister components / workflows from the
+    zoo.</li>
+    <li><strong>Metadata Specification</strong>: This specifies the metadata that are expected for the registration of a
+    component / workflow</li>
+  </ul>
+  <section id="odtws-4-zoo-repository">
+    <h3>Repository</h3>
+    <p>
+      The ODTWS-4 Zoos shall consist of a repository that lists the ODDS-3 Orchestrator(s) with which its
+      components are interoperable. Compliance with these orchestrators shall be guaranteed for all
+      components it registers. The index may be provided as an <code>index.json</code> or <code>index.md</code>. 
+      The zoo may choose to register only ODTWS-1 Components or ODTWS-2 Workflows. The ODTWS-4 zoo must provide the
+      index as a list. It should provide a search by tags (see metadata for components below).
+    </p>  
+  </section>
+  <section id="odtws-4-zoo-registration">
+    <h3>Registration Method</h3>  
+    <p>
+      The zoo shall offer a method to submit a component or workflow and add it to the index. The method
+      to add a component or workflow shall be documented for submitters and shall guarantee compliance
+      with the orchestrators by implementing a review process before submission. Pull Requests may be
+      used as a submission method and to unregister components or workflows.
+    </p>  
+    <figure id="figure16">
+      <img src="images/figure16.png" alt="Digital Twin Zoo Registration"/>
+      <figcaption>Components are added to and removed from the zoo via requests.
+      </figcaption>
+    </figure>     
+  </section>
+  <section id="odtws-4-zoo-component-metadata">
+    <h3>Metadata for Components</h3>
+    <p>
+      The ODTWS-4 Zoo shall reuse the metadata of the ODTWS-1 Component. The metadata file of the
+      component in the zoo shall be provided in a yaml or json file with a standardized name, such as
+      <code>odtws.yml</code> or <code>odtws.json</code>.
+      The ODTWS-4 Zoo shall expect these metadata for the ODTWS-1 Component:
+    </p>
+    <p>Required:</p>
+    <ul>
+      <li>Name: Component name</li>
+      <li>Authors: Authors of Component (may differ from tool authors)</li>
+      <li>Version: Version of the Component, see <a href="#odtws-1-components-versioning">Versioning</a> 
+        for how it is coupled with the tool version</li>
+      <li>Repository Tool: Repository of the Tool</li>
+      <li>Repository Component: Repository of the Component</li>
+      <li>Component License: License of Component: it shall be compatible with the license of the tool</li>
+      <li>Type: Type of Component</li>
+      <li>Description: Short description of the Component</li>
+    </ul>
+    <p>Recommended:</p>
+    <ul>  
+      <li>Tags: A list of tags describing the component</li>
+      <li>Ports: ports shall be provided for interactive components</li>
+      <li>Parameters with Default and Data Type for Parameters that should be exposed</li>
+      <li>Configuration Files: a list of further configuration files with descriptions, see [Parameter files] and
+        [Metrics files]</li>      
+      <li>Data Inputs: a list of file inputs with type, path and description</li>
+      <li>Data Outputs: a list of file outputs with type, path and description, see <a href="#odtws-1-components-semantic-schema">
+        Semantic Input and Output File</a></li>
+      <li>Schema-Input: Path to input schema for automatic input validation, see <a href="#odtws-1-components-semantic-schema">
+        Semantic Input and Output File</a></li>
+      <li>Schema-Output: Path to output schema for automatic output validation</li>
+      <li>Devices: indicate whether a GPU is needed</li>                        
+    </ul>
+  </section>  
+  <section id="odtws-4-zoo-workflow-metadata">
+    <h3>Metadata for Workflows</h3>
+    <p>
+      For the registration of ODTWS-2 Workflows in the ODTWS-4 Zoo, workflow files shall be provided in a
+      YAML format, specifying Acyclic Graphs of Components and including the versions of these
+      components.
+    </p>  
+  </section>  
+</section>
+
+<section class="appendix" id="ODTP">
+  <h2>ODTP</h2>
+  <p>The reference implementation of the ODTWS: A tool designed to generate specific digital twins by
+    integrating into a platform how to manage, run, and design digital twins. It offers an interface (CLI,
+    and GUI) for running and managing digital twins. It wraps different open source technologies
+    according to ODTWS to provide a high level Application Programming Interface (API) for the final user.
+    The reference implementation may not implement all features of the standard but aims to do so in the
+    long-run. The reference implementation can be found here: [[ODTP]]. As
+    such, ODTP is a Proof-Of-Concept of the ODTWS with the focus on specific digital twins in mobility
+    context. It was built in order to establish the ODTWS Standard via a POC in collaboration between
+    [[CSFM]] and [[SDSC]].
+  </p>
+  <p>
+    In the following section we list the alignments and differences between ODTWS and ODTP: therefore
+    this sections structure aligns to ODTWS:
+  </p>
+  <ul>
+    <li><strong>ODTP Components</strong>: ODTP components are very aligned to ODTWS-1 Components.</li>
+    <li><strong>ODTP Workflows</strong>: the concepts of ODTWS-2 Workflows have not been implemented in ODTP yet.</li>
+    <li><strong>ODTP Orchestrator</strong>: The ODTP orchestrator is aligned to the ODTWS orchestrator except that it
+      does not support X.</li>
+    <li><strong>ODTP Zoo</strong>: the zoo has been planned but not yet been implemented and is also not connected
+      to the Orchestrator yet.</li>
+  </ul>
+  <section id="odtp-components">
+    <h3>ODTP Components</h3>
+    <p>ODTP Components served as role models for the concept of ODTWS-1 Components. In this section the
+      implementation of ODTWS by ODTP comes very close. The <a href="#odtws-1-components-versioning">versioning</a> 
+      as described in ODTWS has not yet been implemented. Also the <a href="#odtws-1-components-type-api">API Components</a> 
+      are not yet supported. But both topics are on the
+      roadmap and will be available in releases that have already been planned.</p>
+    <p>See here for an example components in the context of ODTP:
+      [[Odtp-Component-Example]]</p>
+  </section>    
+  <section id="odtp-workflows">
+    <h3>ODTP Workflows</h3>
+    <p>
+      The concepts of ODTWS-2 Workflows and Workflow Templates have not been implemented in ODTP.
+      But the need for them has surfaced through the user experience with the ODTP orchestrator:
+    </p>
+    <ul>
+      <li>Executions of workflows are often very similar, so that it makes sense to add templates for
+      them, so that they can be created with more ease.</li>
+      <li>he Combination of Components into Workflows is not arbitrary, but mostly components have
+      been built for certain use cases that can be translated into workflows of components.
+      Therefore it makes sense to register those established workflows once they have been tested
+      and proven to work.</li>
+    </ul>
+    <p>Therefore ODTP Workflows are on the roadmap of ODTP and will be implemented in an upcoming
+      release.</p>      
+  </section>  
+  <section id="odtp-orchestrator">
+    <h3>ODTP Orchestrator</h3>
+    <p>
+      The ODTP Orchestrator aligns to the ODTWS-3 Orchestrator and implements an orchestrator for the
+      ODTP Components. It offers a command line interface and graphical user interface. It is still a POC
+      so even some mandatory features of ODTWS have not been yet implemented there. ODTP was also
+      used to evaluate beyond what itself currently offers the demands and needs for the digital twin
+      orchestration. It thus directly enabled the formulation of the ODTWS.
+    </p>
+    <section id="odtp-orchestrator-features">
+      <h4>Features</h4>
+      <p> 
+        The features that have been implemented from ODTWS-3 Orchestrator are the following:
+      </p>
+      <ul>
+        <li><strong>User Interface</strong>: both GUI and CLI are available as interfaces</li>
+        <li><strong>Usage of [[Docker]]</strong>: the usage of Docker is exactly as described in ODTWS-3 Orchestrator</li>
+        <li><strong>Data Storage</strong>: has been implemented as described in ODTWS-3 Orchestrator</li>
+        <li><strong>Operational Data: operational data for workflows and workflow templates have not yet been
+            added, also the results in ODTP are not yet adjusted to results in ODTWS-3, that span over
+            several executions. But the need for this has been identified and it will be implemented in
+            ODTP the way it has been suggested in ODTWS-3</li>
+        <li><strong>Tool Adapter</strong>: implemented as suggested in ODTWS-3 by proving a component template with
+        instructions: [[Odtp-Component-Template]]</li>
+        <li><strong>Client Library</strong>: implemented as in ODTWS-3 by providing a github repo that can be mounted via
+        [[Git]] submodules in on the components, see:
+        [[Odtp-Component-Client]] and
+        [[Odtp-Component-Example]]</li>
+      </ul>
+      <p>Features on the roadmap are:</p>
+      <ul>
+        <li><strong>Authentication</strong>: planned with [[Keycloak]] as suggested in ODTWS-3</li>
+        <li><strong>Semantic Validation</strong>: it will be possible to automatically check outputs and inputs as described
+        in ODTWS-3 <a href="#odtws-orchestrator-semantic-validation">Semantic Validation</a></li>
+      </ul>
+    </section>
+    <section id="odtp-orchestrator-technologies">
+      <h4>Technologies</h4>
+      <p>
+        The orchestrator for ODTP is implemented with python using the following technologies:
+      </p>
+      <ul>
+        <li>Dashboard (Nicegui)</li>
+        <li>Command Line Interface (Typer)</li>
+        <li>Snapshots/Data transferring ([[S3-Minio]])</li>
+      </ul>
+      <p>Not yet implemented but planned in one of the next releases:</p>
+      <ul>
+        <li>Authentication (eduID, GH)</li>
+        <li>vSemantic Input and Output Validation, see [Semantic Input & Output Schema]</li>
+        <li>Workflow manager (Barfi): to create Acyclic Graphs as workflows</li>
+        <li>License manager: to check for the compatibility of component licenses</li>
+        <li>Additional Data governance (for example an integration with the Swiss Data Custodian</li>
+        <li>Performance Logging (Grafana)</li>
+        <li>KG/Ontology storing (GraphDB)</li>
+      </ul>
+    </section>
+  </section>     
+  <section id="odtp-zoo">
+    <h3>ODTP zoo</h3>
+    <p>
+      A zoo has been implemented with examples from the mobility sector: [[Odtp-org-Zoo]]. For practical
+      purposes, the zoo also has a web frontend: [[Odtp-Zoo-Frontend]].</p>
+    <p>The zoo gives its README a recipe on how to add a component to the zoo. Components are added by
+      PRs and they are also removed by PRs. At all times the repo offers an <code>index.json</code> file of registered
+      components. There is a github action implemented that add the components metadata from a
+      <code>odtp.yaml</code> file to the index. Then an static webpage hosted in GitHub pages gets updated
+    </p>
+  </section>
+</section>  
+
+<section class="appendix" id="Eqasim/Matsim">
+  <h2>Eqasim/Matsim</h2>
+  <p>We provide a workflow for a digital twin to create synthetic populations (Hörl & Balać, 2019) and run
+    MATSim-based mobility simulation of three scenarios: Ile de France, Corsica, and Switzerland:</p>
+  <figure id="figure17">
+    <img src="images/figure17.png" alt="Mobility Eqasim/Matsim Workflow"/>
+    <figcaption>Overview of [[Eqasim]] workflow in ODTP.
+    </figcaption>
+  </figure>
+  <p>The data loader component prepares statistical data on the population of the respective scenario and
+    the geographic data from standardized data sources. The French scenarios are publicly available, the
+    Swiss scenario requires a valid contract with the Swiss Federal Statistics Office (FSO).
+  </p>
+  <p>Overview of the Components:</p>
+  <ul>
+    <li>[[Odtp-Eqasim-Dataloader]] The data loader component prepares statistical data on the
+    population of the respective scenario and the geographic data from standardized data
+    sources. The French scenario is publicly available, the Swiss scenario requires a valid contract
+    with the Swiss Federal Statistics Office (FSO).</li>
+    <li>[[ODTP-Eqasim]] The [[Eqasim]] component generates a synthetic population based on statistical
+    data and links them with travel profiles according to statistical properties.</li>
+    <li>[[ODTP-Eqasim-Matsim]] The[[MATSim]] component uses the synthetic population to generate
+    transport simulations.</li>
+    <li>[[Odtp-Travel-Data-Dashboard]] The travel data dashboard visualizes the Origin-Destination data
+    output of the [[MATSim]] simulation to communicate mobility patterns.</li>
+  </ul>  
+    <p>Reference: [[Eqasim-in-Mobility]]</p> 
+</section>
+
+<section class="appendix" id="Mobility Causal Interventions">
+  <h2>Mobility Causal Interventions</h2>
+  <p>We provide another workflow for a digital twin that implements the mobility causal intervention
+    framework to evaluate the robustness of deep learning models towards data distribution shifts, with
+    the application of individual next location prediction (Hong et al, 2023):
+  </p>
+  <figure id="figure18">
+    <img src="images/figure18.png" alt="Mobility Causal Interventions Workflow"/>
+    <figcaption>Overview of the mobility causal intervention workflow in ODTP.
+    </figcaption>
+  </figure>    
+  <p>
+    The mobility simulation module is used to generate individual location sequences. It also
+    incorporates the causal intervention mechanism to generate intervened synthetic data that represent
+    different data distribution shifts. These synthetic data are fed into the next-location-prediction module
+    to quantify a model’s robustness against interventions. Meanwhile, a mobility-metrics module is used
+    to monitor the change in the characteristics of mobility data.
+  </p>
+  <p>
+    Overview of the components:
+  </p>
+  <ul>
+  <li>[[ODTP-SQL-Dataloader]]: This component performs SQL queries to a compatible database and
+    create a dataframe output in csv format.
+  </li>
+  <li>[[ODTP-Postgis-Dataloader]]: This module performs postGIS SQL queries to postgresql databases
+    containing and provides the output in csv format.</li>
+  <li>[[ODTP-Mobility-Simulation]]: This module generates synthetic individual location visit sequences
+    based on mechanistic mobility simulators (including EPR, IPT, Density-EPR, and DT-EPR
+    models). The module also generates intervened synthetic mobility data based on causal
+    interventions through the specification of parameters to be intervened and levels of the
+    interventions.</li>
+  <li>[[ODTP-Mobility-Metrics]]: This module includes multiple metrics to quantify the characteristics of
+    individual mobility sequences, e.g., location visitation frequency, radius of gyration, real
+    entropy, mobility motifs etc.</li>
+  <li>[[ODTP-Next-Location-Prediction]]: This module includes two deep learning models for individual
+    next location prediction, the LSTM model and the Multi-Head Self-Attentional (MHSA) model.</li>
+  </ul>
+  <p>Reference: [[Causal-interventions-in-Mobility]]</p>
+</section>
+<section id="tof" class="appendix"></section>
+</body>
+</html>
