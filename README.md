@@ -1,3 +1,5 @@
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.13843004.svg)](https://doi.org/10.5281/zenodo.13843004)
+
 # ODTWS - Open Digital Twin Workflow Standard
 
 This repo contains the Specification of the Open Digital Twin Workflow Standard
