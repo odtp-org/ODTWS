@@ -13,7 +13,7 @@ build workflows from component was distinguishing this approach from other Digit
 
 ## Dependence on W3C
 
-The specification of DCAT-AP CH 2.0 uses respec: https://respec.org/docs/
+The specification of ODTWS uses respec: https://respec.org/docs/
 
 It needs the W3C Server to be up to render correctly. In case there is an issue with the 
 specification, it might be related to a downtime of the W3C Server:
